@@ -11,6 +11,7 @@ private:
 	bool positive=true;
 	static const ll base=1000000000;
 public:
+	// Constructor//
 	big_int(){
 		positive=true;
 	}
@@ -35,7 +36,9 @@ public:
 	    int size = str.length();
 
 	    positive = (str[0] != '-');
-
+	    if(str[0]=='-'){
+	    	str.erase(str.begin());
+	    }
 	    while (true) {
 	        if (size <= 0) break;
 	        if (!positive && size <= 1) break;
@@ -52,6 +55,7 @@ public:
 	        size -= length;
 	    }
 	}
+	// Assign//
 	big_int operator=(const big_int &x){
 		num.clear();
 		for(auto ch:x.num){
@@ -59,15 +63,35 @@ public:
 		}
 		return *this;
 	}
-
+	big_int operator=(ll b){
+		big_int tb(b);
+		num.clear();
+		for(auto ch:tb.num){
+			num.push_back(ch);
+		}
+		return *this;
+	}
+	// output//
 	void print(){
-		// if(!positive) cout<<"-";
 		int len=num.size();
+		if(len==1 and num[0]==0){
+			cout<<"0\n";
+			return;
+		}
+		if(!positive){
+			cout<<'-';
+		}
 		for(int i=len-1;i>=0;i--){
 			cout<<num[i];
 		}
 		cout<<"\n";
 	}
+	//Clear//
+	void clear(){
+		num.clear();
+		positive=true;
+	}
+	// Comparison//
 	int check (const big_int &a,const big_int &b){
 		if(a.positive and !b.positive){
 			return 0;
@@ -92,6 +116,7 @@ public:
 	bool operator !=(const big_int &b){ return(check(*this,b)!=2);}
 	bool operator ==(const big_int &b){ return(check(*this,b)==2);}
 
+	// Addition//
 	big_int operator +(const big_int &b){
 		if(!b.positive){
 			return *this-b;
@@ -133,6 +158,7 @@ public:
 		return (*this+temp);
 	}
 
+	//Subtraction//
 	big_int operator -(const big_int &b){
 		if(!b.positive){
 			return *this+b;
@@ -173,6 +199,8 @@ public:
 		big_int temp(b);
 		return (*this-temp);
 	}
+
+	//Multiplication//
 	big_int operator *(const big_int &b){
 		int i,j;
 		int tot=num.size()+b.num.size();
@@ -199,12 +227,39 @@ public:
 		big_int temp(b);
 		return (*this*temp);
 	}
+
 	big_int operator +=(const big_int &b){return *this=(*this+b);}
 	big_int operator *=(const big_int &b){return *this=(*this*b);}
 	big_int operator -=(const big_int &b){return *this=(*this -b);}
 	big_int operator *=(ll x) {return( *this=(*this *x));}
 	big_int operator +=(ll x) {return( *this=(*this +x));}
 	big_int operator -=(ll x) {return( *this=(*this -x));}
+
+	//power//
+	big_int power(ll b){
+	    big_int res(1);
+	    ll save=b;
+	    while (b > 0) {
+	        if (b & 1)
+	            res = res * (*this);
+	        *(this)*= *(this);
+	        b >>= 1;
+	    }
+	    if(!positive and b%2==0){
+	    	positive=true;
+	    }
+	    return res;
+	}
+
 };
+
+//Factorial//
+big_int factorial(ll n){
+	big_int res = 1;
+    for(ll i=2;i<=n;i++){
+    	res*=i;
+    }
+    return res;
+}
 
 #endif
